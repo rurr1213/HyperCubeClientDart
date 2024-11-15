@@ -85,6 +85,7 @@ class HyperCubeClient extends HyperCubeClientBase {
     return found;
   }
 
+  @override
   init(ConnectionInfo connectionInfo,
       {HyperCubeServerAddresses? paramServerAddresses}) async {
     packetCtrl.init();

@@ -472,4 +472,8 @@ class Logger {
           EVENTTYPE.CON, "", be.toString(), 0));
     }
   }
+
+  LoggerEvent removeFirstEvent() {
+    return eventList.removeFirst();
+  }
 }

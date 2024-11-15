@@ -122,6 +122,12 @@
       "languageVersion": "3.2"
     },
     {
+      "name": "foundation",
+      "rootUri": "file:///C:/Users/Gtrr/AppData/Local/Pub/Cache/hosted/pub.dev/foundation-0.0.5",
+      "packageUri": "lib/",
+      "languageVersion": "2.18"
+    },
+    {
       "name": "frontend_server_client",
       "rootUri": "file:///C:/Users/Gtrr/AppData/Local/Pub/Cache/hosted/pub.dev/frontend_server_client-4.0.0",
       "packageUri": "lib/",
@@ -452,13 +458,13 @@
       "languageVersion": "2.19"
     },
     {
-      "name": "hq_client_dart",
+      "name": "hypercube_client",
       "rootUri": "../",
       "packageUri": "lib/",
       "languageVersion": "3.5"
     }
   ],
-  "generated": "2024-11-15T22:27:45.182628Z",
+  "generated": "2024-11-15T23:45:44.338832Z",
   "generator": "pub",
   "generatorVersion": "3.5.4",
   "flutterRoot": "file:///C:/src/flutter",
