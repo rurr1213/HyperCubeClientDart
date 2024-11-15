@@ -1,4 +1,4 @@
-name: hq_client_dart
+name: hypercube_client
 
 description: A Dart package for interacting with the HyperCube platform.
 
@@ -6,6 +6,9 @@ version: 0.1.0 # Update with your package version
 
 # Dependencies
 dependencies:
+  flutter:
+    sdk: flutter
+  foundation: ^0.0.5 # Or the latest version you're using
   firedart: ^0.9.8 # Or the latest version you're using
   network_info_plus: ^6.1.1
 
