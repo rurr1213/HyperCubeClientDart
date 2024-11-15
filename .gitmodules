@@ -1,0 +1,3 @@
+[submodule "lib/CommonCppDartCode"]
+	path = lib/CommonCppDartCode
+	url = git@github.com:rurr1213/CommonCppDartCode.git
