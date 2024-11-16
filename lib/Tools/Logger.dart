@@ -207,6 +207,16 @@ class LoggerEvent {
 }
 
 class Logger {
+  static final Logger _instance = Logger._internal();
+
+  factory Logger() {
+    return _instance;
+  }
+
+  Logger._internal() {
+    timer.start();
+  }
+
   static const int BOTEVENTLISTSIZE = 5000;
   List<LoggerEvent> dumpList = [];
   late Function() onSysErrorNotify;
@@ -222,10 +232,6 @@ class Logger {
 
   LoggerStateMap remoteStateMap = LoggerStateMap();
   RemoteDeviceMgr? _remoteDeviceMgr;
-
-  Logger() {
-    timer.start();
-  }
 
   setup(Function() _onSysErrorNotify) {
     onSysErrorNotify = _onSysErrorNotify;
@@ -248,6 +254,24 @@ class Logger {
     if (!isTrue) {
       add(EVENTTYPE.ERROR, _name, _disc, _value);
     }
+  }
+
+  bool addInfo(String _name, [String _description = "", int _value = 0]) {
+    var event = new LoggerEvent(timer.elapsedMilliseconds.toDouble(), EVENTTYPE.INFO,
+        _name, _description, _value);
+    return addEvent(event);
+  }
+
+  bool addWarning(String _name, [String _description = "", int _value = 0]) {
+    var event = new LoggerEvent(timer.elapsedMilliseconds.toDouble(), EVENTTYPE.WARNING,
+        _name, _description, _value);
+    return addEvent(event);
+  }
+
+  bool addError(String _name, [String _description = "", int _value = 0]) {
+    var event = new LoggerEvent(timer.elapsedMilliseconds.toDouble(), EVENTTYPE.ERROR,
+        _name, _description, _value);
+    return addEvent(event);
   }
 
   bool add(EVENTTYPE _type, String _name, String _description,

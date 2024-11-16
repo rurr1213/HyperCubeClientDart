@@ -1,4 +1,5 @@
 import 'package:firedart/firedart.dart';
+import 'Firestore/firestore_mgr.dart';
 
 import 'Core/HyperCubeClientBase.dart';
 import 'Core/SignallingObject.dart';
@@ -40,9 +41,11 @@ class HyperCubeClient extends HyperCubeClientBase {
   late PacketCtrl packetCtrl;
   HyperCubeHost hyperCubeHost;
   CloudConfigInfo cloudConfigInfo = CloudConfigInfo();
+  FirestoreMgr firestoreMgr = FirestoreMgr();
 
   HyperCubeClient(Logger logger, this.hyperCubeHost) : super(logger) {
     packetCtrl = PacketCtrl(logger, onMsg);
+    firestoreMgr.attemptSignIn(email:"rurr1213@gmail.com", pass:"Bfrx100#");
   }
 
   initCloudConfig() {
