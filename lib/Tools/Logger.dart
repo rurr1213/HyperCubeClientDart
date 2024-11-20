@@ -1,5 +1,6 @@
 import 'dart:collection';
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 
 import '../CommonCppDartCode/Messages/MessagesCommon_generated.dart';
 import 'JMsgObject.dart';
@@ -206,7 +207,7 @@ class LoggerEvent {
   }
 }
 
-class Logger {
+class Logger extends ChangeNotifier {
   static final Logger _instance = Logger._internal();
 
   factory Logger() {
@@ -219,7 +220,7 @@ class Logger {
 
   static const int BOTEVENTLISTSIZE = 5000;
   List<LoggerEvent> dumpList = [];
-  late Function() onSysErrorNotify;
+  late Function()? onSysErrorNotify;
 
   Queue<LoggerEvent> eventList = Queue<LoggerEvent>();
   SplayTreeMap<String, String> stateList = SplayTreeMap<String, String>();
@@ -257,20 +258,20 @@ class Logger {
   }
 
   bool addInfo(String _name, [String _description = "", int _value = 0]) {
-    var event = new LoggerEvent(timer.elapsedMilliseconds.toDouble(), EVENTTYPE.INFO,
-        _name, _description, _value);
+    var event = new LoggerEvent(timer.elapsedMilliseconds.toDouble(),
+        EVENTTYPE.INFO, _name, _description, _value);
     return addEvent(event);
   }
 
   bool addWarning(String _name, [String _description = "", int _value = 0]) {
-    var event = new LoggerEvent(timer.elapsedMilliseconds.toDouble(), EVENTTYPE.WARNING,
-        _name, _description, _value);
+    var event = new LoggerEvent(timer.elapsedMilliseconds.toDouble(),
+        EVENTTYPE.WARNING, _name, _description, _value);
     return addEvent(event);
   }
 
   bool addError(String _name, [String _description = "", int _value = 0]) {
-    var event = new LoggerEvent(timer.elapsedMilliseconds.toDouble(), EVENTTYPE.ERROR,
-        _name, _description, _value);
+    var event = new LoggerEvent(timer.elapsedMilliseconds.toDouble(),
+        EVENTTYPE.ERROR, _name, _description, _value);
     return addEvent(event);
   }
 
@@ -298,6 +299,9 @@ class Logger {
       eventList.removeFirst();
     }
     processEvent(event);
+
+    notifyListeners();  // Notify listeners of change
+
     return true;
   }
 
@@ -416,7 +420,9 @@ class Logger {
   onSysError() {
     dumpLast50("SYSERROR");
     try {
-      onSysErrorNotify();
+      if (onSysErrorNotify != null) {
+        onSysErrorNotify!();
+      }
     } catch (e) {}
     // if (onSysErrorNotify != null) onSysErrorNotify();
   }
