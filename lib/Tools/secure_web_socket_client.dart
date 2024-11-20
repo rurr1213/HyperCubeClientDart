@@ -2,25 +2,12 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:typed_data';
 
-//import 'package:web_socket_channel/io.dart';
 import 'package:web_socket_channel/web_socket_channel.dart'; // Import the correct channel
 import 'logger.dart';
-
-// Assuming you have a Logger class. Replace with your actual logging mechanism
-/*
-class Logger {
-  void add(EVENTTYPE type, String from, String msg) {
-    print("$type, $from, $msg");
-  }
-}
-
-enum EVENTTYPE { INFO, WARNING, ERROR }
-*/
 
 class SecureWebSocketClient {
   final String _serverUrl;
   final Logger _logger;
-//  IOWebSocketChannel? _channel;
   WebSocketChannel? _channel;
   bool _isConnected = false;
   StreamSubscription? _subscription;
