@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 
 import 'CommonCppDartCode/Messages/HyperCubeMessagesCommon_generated.dart';
-import 'Data/system_info.dart';
+import 'data/system_info.dart';
 
 import 'tools/logger.dart';
 import 'tools/msg_ext.dart';

@@ -1,8 +1,8 @@
 import 'package:firedart/firedart.dart';
-import 'Firestore/firestore_mgr.dart';
+import 'firestore/firestore_mgr.dart';
 
-import 'Core/hyper_cube_client_base.dart';
-import 'Core/signalling_object.dart';
+import 'core/hyper_cube_client_base.dart';
+import 'core/signalling_object.dart';
 import 'tools/logger.dart';
 import 'tools/packet_ctrl.dart';
 import 'tools/msg_ext.dart';

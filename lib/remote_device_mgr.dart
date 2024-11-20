@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:typed_data';
 
-import 'Data/system_info.dart';
+import 'data/system_info.dart';
 import 'hyper_cube_client.dart';
 import 'hyper_cube_client_mgr.dart';
 
