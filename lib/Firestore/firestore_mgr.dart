@@ -1,6 +1,6 @@
 import 'firestore_access.dart' as db;
 import 'package:firedart/firedart.dart';
-import '../Tools/Logger.dart';
+import '../Tools/logger.dart';
 
 
 class FirestoreMgr {

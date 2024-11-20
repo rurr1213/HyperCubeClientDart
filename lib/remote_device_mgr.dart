@@ -1,14 +1,14 @@
 import 'dart:async';
 import 'dart:typed_data';
 
-import 'Data/SystemInfo.dart';
-import 'HyperCubeClient.dart';
-import 'HyperCubeClientMgr.dart';
+import 'Data/system_info.dart';
+import 'hyper_cube_client.dart';
+import 'hyper_cube_client_mgr.dart';
 
 import 'CommonCppDartCode/Messages/MessagesCommon_generated.dart';
-import 'Tools/SerDes.dart';
-import 'Tools/Logger.dart';
-import 'Tools/MsgExt.dart';
+import 'tools/ser_des.dart';
+import 'tools/logger.dart';
+import 'tools/msg_ext.dart';
 
 class CommMgr implements HyperCubeHost {
   final Logger logger;

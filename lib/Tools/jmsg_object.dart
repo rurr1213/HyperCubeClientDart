@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import '../CommonCppDartCode/Messages/MessagesCommon_generated.dart';
 import '../CommonCppDartCode/Common_generated.dart';
-import 'Logger.dart';
+import 'logger.dart';
 
 class JDataOnOff {
   bool on;

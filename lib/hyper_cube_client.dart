@@ -1,12 +1,12 @@
 import 'package:firedart/firedart.dart';
 import 'Firestore/firestore_mgr.dart';
 
-import 'Core/HyperCubeClientBase.dart';
-import 'Core/SignallingObject.dart';
-import 'Tools/Logger.dart';
-import 'Tools/PacketCtrl.dart';
-import 'Tools/MsgExt.dart';
-import 'Tools/Packet.dart';
+import 'Core/hyper_cube_client_base.dart';
+import 'Core/signalling_object.dart';
+import 'tools/logger.dart';
+import 'tools/packet_ctrl.dart';
+import 'tools/msg_ext.dart';
+import 'tools/packet.dart';
 import 'CommonCppDartCode/Messages/MessagesCommon_generated.dart';
 import 'CommonCppDartCode/Messages/HyperCubeMessagesCommon_generated.dart';
 
@@ -45,7 +45,7 @@ class HyperCubeClient extends HyperCubeClientBase {
 
   HyperCubeClient(Logger logger, this.hyperCubeHost) : super(logger) {
     packetCtrl = PacketCtrl(logger, onMsg);
-    firestoreMgr.attemptSignIn(email:"rurr1213@gmail.com", pass:"Bfrx100#");
+    firestoreMgr.attemptSignIn(email: "rurr1213@gmail.com", pass: "Bfrx100#");
   }
 
   initCloudConfig() {
@@ -92,14 +92,13 @@ class HyperCubeClient extends HyperCubeClientBase {
   init(ConnectionInfo connectionInfo,
       {HyperCubeServerAddresses? paramServerAddresses}) async {
     packetCtrl.init();
-
     HyperCubeServerAddresses? hyperCubeServerAddressing;
 
     // if input address is given use that
     if (paramServerAddresses != null) {
       hyperCubeServerAddressing = paramServerAddresses;
     }
-
+/*
     bool res = await getCloudConfig(cloudConfigInfo);
 
     // if there is a config from the cloud, use that
@@ -110,8 +109,8 @@ class HyperCubeClient extends HyperCubeClientBase {
           cloudConfigInfo.secondaryServer,
           cloudConfigInfo.secondaryIpPort);
     }
-
-    res = super
+*/
+    bool res = super
         .init(connectionInfo, paramServerAddresses: hyperCubeServerAddressing);
     return res;
   }

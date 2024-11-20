@@ -1,7 +1,7 @@
 //import 'dart:ffi';
 import 'dart:io';
 // import 'package:watchman_fl/GlobalDataModel.dart';
-import 'Logger.dart';
+import 'logger.dart';
 
 const _defaultMulticastAddress = "239.0.0.10";
 const _defaultMulticastPort = 4545;

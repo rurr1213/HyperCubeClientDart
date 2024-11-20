@@ -1,17 +1,17 @@
 import 'package:flutter/foundation.dart';
 
 import 'CommonCppDartCode/Messages/HyperCubeMessagesCommon_generated.dart';
-import 'Data/SystemInfo.dart';
+import 'Data/system_info.dart';
 
-import 'Tools/Logger.dart';
-import 'Tools/MsgExt.dart';
-import 'HyperCubeClient.dart';
+import 'tools/logger.dart';
+import 'tools/msg_ext.dart';
+import 'hyper_cube_client.dart';
 
 class StringLineList extends ChangeNotifier {
   static const int maxLength = 1000;
-  HyperCubeMgr backChannelMgr;
+  HyperCubeMgr hyperCubeMgr;
   List<String> _list = [];
-  StringLineList(this.backChannelMgr);
+  StringLineList(this.hyperCubeMgr);
   int dumpedLines = 0;
 
   bool onList(List<String> _stringList) {
@@ -70,7 +70,7 @@ class LogLineList extends StringLineList {
   requestLogs() {
     int startIndex = _list.length;
     int numItems = 10;
-    return backChannelMgr.getLogLines(startIndex, numItems);
+    return hyperCubeMgr.getLogLines(startIndex, numItems);
   }
 
   bool onLogLines(LineList _lineList) {
@@ -84,7 +84,7 @@ class StatusLineList extends StringLineList {
   requestStatus() {
     int startIndex = _list.length;
     int numItems = 10;
-    return backChannelMgr.getStatusLines(startIndex, numItems);
+    return hyperCubeMgr.getStatusLines(startIndex, numItems);
   }
 
   bool onStatusLines(LineList _lineList) {

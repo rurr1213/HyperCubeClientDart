@@ -3,8 +3,8 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 
 import '../CommonCppDartCode/Messages/MessagesCommon_generated.dart';
-import 'JMsgObject.dart';
-import '../RemoteDeviceMgr.dart';
+import 'jmsg_object.dart';
+import '../remote_device_mgr.dart';
 
 enum EVENTTYPE {
   INIT,

@@ -1,7 +1,7 @@
 import 'dart:typed_data';
 
+import '../tools/ser_des.dart';
 import '../CommonCppDartCode/Messages/MessagesCommon_generated.dart';
-import 'SerDes.dart';
 
 const MSGHEADERLENGTH_MAX = 64;
 

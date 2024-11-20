@@ -11,6 +11,8 @@ dependencies:
   foundation: ^0.0.5 # Or the latest version you're using
   firedart: ^0.9.8 # Or the latest version you're using
   network_info_plus: ^6.1.1
+  universal_io: ^2.2.2
+  web_socket_channel: ^2.3.0
 
 # Dev dependencies
 dev_dependencies:

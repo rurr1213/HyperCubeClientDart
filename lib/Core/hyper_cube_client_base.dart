@@ -4,12 +4,12 @@ import 'dart:async';
 
 import '../CommonCppDartCode/Messages/MessagesCommon_generated.dart';
 import '../CommonCppDartCode/Messages/HyperCubeMessagesCommon_generated.dart';
-import '../Tools/SerDes.dart';
-import '../Tools/TcpMgr.dart';
-import '../Tools/Packet.dart';
-import '../Tools/MsgExt.dart';
-import '../Tools/Logger.dart';
-import 'SignallingObject.dart';
+import '../tools/ser_des.dart';
+import '../tools/tcp_mMgr.dart';
+import '../tools/packet.dart';
+import '../tools/msg_ext.dart';
+import '../tools/logger.dart';
+import 'signalling_object.dart';
 
 const String PRIMARY_SERVERNAME = "primary.hyperkube.net";
 const String SECONDARY_SERVERNAME = "secondary.hyperkube.net";
@@ -71,6 +71,7 @@ class HyperCubeClientBase {
 
   Future<bool> dnsLookup(HyperCubeServerAddress _hyperCubeServerAddress) async {
     try {
+      /*
       final result = await InternetAddress.lookup(
           _hyperCubeServerAddress.hostName,
           type: InternetAddressType.IPv4);
@@ -83,6 +84,8 @@ class HyperCubeClientBase {
       // logger.add(EVENTTYPE.INFO, "HyperCubeClient::dnsLookup()",
       //    "lookup of $_hyperCubeServerAddress returned ${internetAddress.address}");
       _hyperCubeServerAddress.ip = internetAddress.address;
+      */
+      _hyperCubeServerAddress.ip = "18.119.99.233";
       return true;
     } catch (e) {
       logger.add(EVENTTYPE.NOTE, "HyperCubeClient::dnsLookup()",

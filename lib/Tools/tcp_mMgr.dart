@@ -1,10 +1,11 @@
 import 'dart:async';
-import 'dart:io';
+//import 'dart:io';
 import 'dart:convert';
 import 'dart:typed_data';
+import 'package:universal_io/io.dart';
 
 // import 'package:watchman_fl/GlobalDataModel.dart';
-import 'Logger.dart';
+import 'logger.dart';
 
 const _defaultTcpAddress = "";
 const _defaultTcpPort = 4545;

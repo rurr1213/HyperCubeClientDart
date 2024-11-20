@@ -2,10 +2,10 @@
 // import 'dart:ffi';
 
 // import 'CommonCppDartCode/Messages/MessagesCommon_generated.dart';
-import 'Packet.dart';
-import 'SerDes.dart';
-import 'MsgExt.dart';
-import 'Logger.dart';
+import 'packet.dart';
+import 'ser_des.dart';
+import 'msg_ext.dart';
+import 'logger.dart';
 
 class WorkingPacket extends Packet {
   final Function(MsgExt msg) onMsgCallBack;

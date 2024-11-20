@@ -2,9 +2,9 @@ import 'dart:convert';
 
 import '../CommonCppDartCode/Messages/MessagesCommon_generated.dart';
 import '../CommonCppDartCode/Messages/HyperCubeMessagesCommon_generated.dart';
-import '../Tools/MsgExt.dart';
-import '../Tools/Logger.dart';
-import 'HyperCubeClientBase.dart';
+import '../tools/msg_ext.dart';
+import '../tools/logger.dart';
+import 'hyper_cube_client_base.dart';
 
 enum SignallingObjectState {
   instantiated,
