@@ -220,7 +220,7 @@ class Logger extends ChangeNotifier {
 
   static const int BOTEVENTLISTSIZE = 5000;
   List<LoggerEvent> dumpList = [];
-  late Function()? onSysErrorNotify;
+  Function() onSysErrorNotify = () => true;
 
   Queue<LoggerEvent> eventList = Queue<LoggerEvent>();
   SplayTreeMap<String, String> stateList = SplayTreeMap<String, String>();
