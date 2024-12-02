@@ -420,8 +420,9 @@ class Logger extends ChangeNotifier {
   onSysError() {
     dumpLast50("SYSERROR");
     try {
+      // ignore: unnecessary_null_comparison
       if (onSysErrorNotify != null) {
-        onSysErrorNotify!();
+        onSysErrorNotify();
       }
     } catch (e) {}
     // if (onSysErrorNotify != null) onSysErrorNotify();
