@@ -1,9 +1,9 @@
 import 'dart:async';
 import 'dart:typed_data';
 
-import 'data/system_info.dart';
-import 'hyper_cube_client.dart';
-import 'hyper_cube_client_mgr.dart';
+import 'Data/system_info.dart';
+import 'hk_client.dart';
+import 'hk_client_mgr.dart';
 
 import 'CommonCppDartCode/Messages/MessagesCommon_generated.dart';
 import 'tools/ser_des.dart';
@@ -12,10 +12,10 @@ import 'tools/msg_ext.dart';
 
 class CommMgr implements HyperCubeHost {
   final Logger logger;
-  late HyperCubeMgr hyperCubeMgr;
+  late HKClientMgr hyperCubeMgr;
 
   CommMgr(this.logger) {
-    hyperCubeMgr = HyperCubeMgr(logger, this);
+    hyperCubeMgr = HKClientMgr(logger, this);
   }
 
   onInfo(String name) {}
@@ -38,7 +38,7 @@ class CommMgr implements HyperCubeHost {
 // -----------------------------------------------------------------------
 enum CHANNEL { NONE, LOCALCHANNEL, BACKCHANNEL }
 
-class RemoteDeviceMgr extends CommMgr {
+class HkDeviceMgr extends CommMgr {
   StreamController<MsgExt> backChanneltreamCtrl = StreamController<MsgExt>();
   Stream? backChannelStream;
   String autoConnectLocalIp = "";
@@ -50,7 +50,7 @@ class RemoteDeviceMgr extends CommMgr {
   int numRecvdMsgs = 0;
   int numSentMsgs = 0;
 
-  RemoteDeviceMgr(this.logger) : super(logger) {
+  HkDeviceMgr(this.logger) : super(logger) {
     backChannelStream = backChanneltreamCtrl.stream;
   }
 

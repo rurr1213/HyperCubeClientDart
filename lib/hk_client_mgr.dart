@@ -1,15 +1,15 @@
 import 'package:flutter/foundation.dart';
 
 import 'CommonCppDartCode/Messages/HyperCubeMessagesCommon_generated.dart';
-import 'data/system_info.dart';
+import 'Data/system_info.dart';
 
 import 'tools/logger.dart';
 import 'tools/msg_ext.dart';
-import 'hyper_cube_client.dart';
+import 'hk_client.dart';
 
 class StringLineList extends ChangeNotifier {
   static const int maxLength = 1000;
-  HyperCubeMgr hyperCubeMgr;
+  HKClientMgr hyperCubeMgr;
   List<String> _list = [];
   StringLineList(this.hyperCubeMgr);
   int dumpedLines = 0;
@@ -110,11 +110,11 @@ class GroupInfoList extends ChangeNotifier {
   }
 }
 
-class HyperCubeMgr extends HyperCubeClient {
+class HKClientMgr extends HkClient {
   HyperCubeHost hyperCubeHost;
   late LogLineList logLineList;
   late StatusLineList statusLineList;
-  HyperCubeMgr(Logger logger, this.hyperCubeHost)
+  HKClientMgr(Logger logger, this.hyperCubeHost)
       : super(logger, hyperCubeHost) {
     logLineList = LogLineList(this);
     statusLineList = StatusLineList(this);

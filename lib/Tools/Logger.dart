@@ -1,10 +1,10 @@
 import 'dart:collection';
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
+import '../hk_device_mgr.dart';
 
 import '../CommonCppDartCode/Messages/MessagesCommon_generated.dart';
 import 'jmsg_object.dart';
-import '../remote_device_mgr.dart';
 
 enum EVENTTYPE {
   INIT,
@@ -233,13 +233,13 @@ class Logger extends ChangeNotifier {
   int testValue = 0;
 
   LoggerStateMap remoteStateMap = LoggerStateMap();
-  RemoteDeviceMgr? _remoteDeviceMgr;
+  HkDeviceMgr? _remoteDeviceMgr;
 
   setup(Function() _onSysErrorNotify) {
     onSysErrorNotify = _onSysErrorNotify;
   }
 
-  setDeviceMgr(RemoteDeviceMgr __deviceMgr) {
+  setDeviceMgr(HkDeviceMgr __deviceMgr) {
     _remoteDeviceMgr = __deviceMgr;
   }
 

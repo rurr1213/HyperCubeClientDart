@@ -37,13 +37,13 @@ class CloudConfigInfo {
   }
 }
 
-class HyperCubeClient extends HyperCubeClientBase {
+class HkClient extends HyperCubeClientBase {
   late PacketCtrl packetCtrl;
   HyperCubeHost hyperCubeHost;
   CloudConfigInfo cloudConfigInfo = CloudConfigInfo();
   FirestoreMgr firestoreMgr = FirestoreMgr();
 
-  HyperCubeClient(Logger logger, this.hyperCubeHost) : super(logger) {
+  HkClient(Logger logger, this.hyperCubeHost) : super(logger) {
     packetCtrl = PacketCtrl(logger, onMsg);
     firestoreMgr.attemptSignIn(email: "rurr1213@gmail.com", pass: "Bfrx100#");
   }
