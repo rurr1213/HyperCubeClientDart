@@ -54,18 +54,20 @@ class HkDeviceMgr extends CommMgr {
     backChannelStream = backChanneltreamCtrl.stream;
   }
 
-  init(SystemInfo? systemInfo) {
+  bool init(SystemInfo? systemInfo) {
     bool res = false;
     autoConnectLocalIp = systemInfo!.colocatedMatrixIp;
 
     res = hyperCubeMgr.initWithSystemInfo(systemInfo: systemInfo);
     logger.add(EVENTTYPE.INFO, "DeviceMgr", "init()", (res == true) ? 1 : 0);
+
+    return res;
   }
 
-  deinit() async {
+  Future<bool> deinit() async {
     logger.add(EVENTTYPE.INFO, "DeviceMgr", "deinit()", 0);
     backChanneltreamCtrl.close();
-    hyperCubeMgr.deinit();
+    return hyperCubeMgr.deinit();
   }
 
   bool _sendBinary(List<int> data, [int size = 0]) {

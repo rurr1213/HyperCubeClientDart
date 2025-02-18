@@ -185,9 +185,9 @@ class HyperCubeClientBase {
     return true;
   }
 
-  deinit() {
+  Future<bool> deinit() async {
     connectionTimer!.cancel();
-    tcpManager.close();
+    return await tcpManager.close();
   }
 
   bool subscribe(String groupName) {
