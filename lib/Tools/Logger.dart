@@ -145,6 +145,7 @@ class LoggerEvent {
       case EVENTTYPE.DBGDATA:
         string = " DBGD:";
         break;
+      // ignore: unreachable_switch_default
       default:
         string = " ???:";
         break;
