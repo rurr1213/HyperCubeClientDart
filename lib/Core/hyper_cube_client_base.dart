@@ -71,7 +71,6 @@ class HyperCubeClientBase {
 
   Future<bool> dnsLookup(HyperCubeServerAddress _hyperCubeServerAddress) async {
     try {
-      /*
       final result = await InternetAddress.lookup(
           _hyperCubeServerAddress.hostName,
           type: InternetAddressType.IPv4);
@@ -84,8 +83,7 @@ class HyperCubeClientBase {
       // logger.add(EVENTTYPE.INFO, "HyperCubeClient::dnsLookup()",
       //    "lookup of $_hyperCubeServerAddress returned ${internetAddress.address}");
       _hyperCubeServerAddress.ip = internetAddress.address;
-      */
-      _hyperCubeServerAddress.ip = "18.119.99.233";
+      //_hyperCubeServerAddress.ip = "18.119.99.233";
       return true;
     } catch (e) {
       logger.add(EVENTTYPE.NOTE, "HyperCubeClient::dnsLookup()",
@@ -121,13 +119,13 @@ class HyperCubeClientBase {
 
       if (connectionOpen) {
         logger.add(EVENTTYPE.INFO, "HyperCubeClient::openConnection()",
-            "Opened connection to $activeServerAddress.ip:$activeServerAddress.port");
+            "Opened connection to ${activeServerAddress.ip}:${activeServerAddress.port}");
         alreadyWarnedOfConnectFailure = false;
         onConnection();
       } else {
         if (!alreadyWarnedOfConnectFailure)
-          logger.add(EVENTTYPE.WARNING, "HyperCubeClient::openConnection()",
-              "connection failed to $activeServerAddress.ip:$activeServerAddress.port");
+          logger.add(EVENTTYPE.WARNING, "HyperCubeClient::openConnection ()",
+              "connection failed to ${activeServerAddress.ip}:${activeServerAddress.port}");
         alreadyWarnedOfConnectFailure = true;
       }
     }
