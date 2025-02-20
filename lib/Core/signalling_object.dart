@@ -406,6 +406,20 @@ class SignallingObject {
         "HyperCubeClient::SignallingObject()::unsubscribe()");
   }
 
+  bool publish(PublishInfo publishInfo ) {
+    if ((state != SignallingObjectState.connected) &&
+        (state != SignallingObjectState.closedForData)) return false;
+    return sendSigCommand(HYPERCUBECOMMANDS.PUBLISHINFO, publishInfo,
+        "HyperCubeClient::SignallingObject()::subscribe()");
+  }
+
+  bool publishAck(PublishInfoAck publishInfoAck ) {
+    if ((state != SignallingObjectState.connected) &&
+        (state != SignallingObjectState.closedForData)) return false;
+    return sendSigCommand(HYPERCUBECOMMANDS.PUBLISHINFOACK, publishInfoAck,
+        "HyperCubeClient::SignallingObject()::subscribe()");
+  }
+
   bool getGroups(String _searchWord, {startingIndex = 0, maxItems = 10}) {
     if ((state == SignallingObjectState.disconnected) ||
         (state == SignallingObjectState.instantiated)) return false;

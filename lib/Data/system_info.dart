@@ -2,7 +2,7 @@ import '../CommonCppDartCode/Messages/HyperCubeMessagesCommon_generated.dart';
 
 class SystemInfo {
   int hyperCubeAppId = HC_APPID_VORTEX;
-  String appName = "Vortex";
+  String appName = "Stargate";
   String appUUID = "";
   String appInstallUUID = "";
   String systemName = "";

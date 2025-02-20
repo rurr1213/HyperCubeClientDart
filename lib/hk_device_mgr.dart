@@ -6,6 +6,8 @@ import 'hk_client.dart';
 import 'hk_device.dart';
 
 import 'CommonCppDartCode/Messages/MessagesCommon_generated.dart';
+import 'CommonCppDartCode/Messages/HyperCubeMessagesCommon_generated.dart';
+
 import 'tools/ser_des.dart';
 import 'tools/logger.dart';
 import 'tools/msg_ext.dart';
@@ -168,5 +170,14 @@ class HkDeviceMgr extends CommMgr {
   List<String> queryChannels(String name) {
     List<String> channelList = [];
     return channelList;
+  }
+
+  bool publish(String groupName, String data) {
+    PublishInfo publishInfo = PublishInfo();
+    publishInfo.groupName = groupName;
+    publishInfo.publishData = data;
+    hkDevice.publish(publishInfo);
+    logger.add(EVENTTYPE.INFO, "DeviceMgr::publish()", groupName);
+    return true;
   }
 }

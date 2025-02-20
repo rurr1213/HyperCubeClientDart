@@ -200,6 +200,14 @@ class HyperCubeClientBase {
     return signallingObject!.unsubscribe(subscriberInfo);
   }
 
+  bool publish(PublishInfo publishInfo) {
+    return signallingObject!.publish(publishInfo);
+  }
+
+  bool publishAck(PublishInfoAck publishInfoAck) {
+    return signallingObject!.publishAck(publishInfoAck);
+  }
+
   dynamic onTcpReceive(Uint8List event) {
     try {
       Packet packet = Packet(event);
