@@ -371,9 +371,7 @@ class SignallingObject {
         "HyperCubeClient::SignallingObject()::sendConnectionInfo()");
   }
 
-  bool createGroup(String groupName) {
-    GroupInfo groupInfo = GroupInfo();
-    groupInfo.groupName = groupName;
+  bool createGroup(GroupInfo groupInfo) {
     return sendSigCommand(HYPERCUBECOMMANDS.CREATEGROUP, groupInfo,
         "HyperCubeClient::SignallingObject()::createGroup()");
   }
@@ -394,20 +392,16 @@ class SignallingObject {
         "HyperCubeClient::SignallingObject()::echoData()");
   }
 
-  bool subscribe(String _groupName) {
+  bool subscribe(SubscriberInfo subscriberInfo ) {
     if ((state != SignallingObjectState.connected) &&
         (state != SignallingObjectState.closedForData)) return false;
-    SubscriberInfo subscriberInfo = SubscriberInfo();
-    subscriberInfo.groupName = _groupName;
     return sendSigCommand(HYPERCUBECOMMANDS.SUBSCRIBE, subscriberInfo,
         "HyperCubeClient::SignallingObject()::subscribe()");
   }
 
-  bool unsubscribe(String _groupName) {
+  bool unsubscribe(SubscriberInfo subscriberInfo) {
     if ((state == SignallingObjectState.disconnected) ||
         (state == SignallingObjectState.instantiated)) return false;
-    SubscriberInfo subscriberInfo = SubscriberInfo();
-    subscriberInfo.groupName = _groupName;
     return sendSigCommand(HYPERCUBECOMMANDS.UNSUBSCRIBE, subscriberInfo,
         "HyperCubeClient::SignallingObject()::unsubscribe()");
   }

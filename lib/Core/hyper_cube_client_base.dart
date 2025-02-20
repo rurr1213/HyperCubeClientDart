@@ -188,12 +188,16 @@ class HyperCubeClientBase {
     return await tcpManager.close();
   }
 
-  bool subscribe(String groupName) {
-    return signallingObject!.subscribe(groupName);
+  bool createGroup(GroupInfo groupInfo) {
+    return signallingObject!.createGroup(groupInfo);
   }
 
-  bool unsubscribe(String groupName) {
-    return signallingObject!.unsubscribe(groupName);
+  bool subscribe(SubscriberInfo subscriberInfo) {
+    return signallingObject!.subscribe(subscriberInfo);
+  }
+
+  bool unsubscribe(SubscriberInfo subscriberInfo) {
+    return signallingObject!.unsubscribe(subscriberInfo);
   }
 
   dynamic onTcpReceive(Uint8List event) {

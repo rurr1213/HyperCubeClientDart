@@ -3,7 +3,7 @@ import 'dart:typed_data';
 
 import 'Data/system_info.dart';
 import 'hk_client.dart';
-import 'hk_client_mgr.dart';
+import 'hk_device.dart';
 
 import 'CommonCppDartCode/Messages/MessagesCommon_generated.dart';
 import 'tools/ser_des.dart';
@@ -12,10 +12,10 @@ import 'tools/msg_ext.dart';
 
 class CommMgr implements HyperCubeHost {
   final Logger logger;
-  late HKClientMgr hyperCubeMgr;
+  late HKDevice hkDevice;
 
   CommMgr(this.logger) {
-    hyperCubeMgr = HKClientMgr(logger, this);
+    hkDevice = HKDevice(logger, this);
   }
 
   onInfo(String name) {}
@@ -33,6 +33,14 @@ class CommMgr implements HyperCubeHost {
   }
 
   onMsg(MsgExt msgExt) {}
+
+  bool onConnection() {
+    return true;
+  }
+
+  bool onDisconnection() {
+    return true;
+  }
 }
 
 // -----------------------------------------------------------------------
@@ -45,8 +53,6 @@ class HkDeviceMgr extends CommMgr {
 
   final Logger logger;
 
-  CHANNEL activeChannel = CHANNEL.NONE;
-
   int numRecvdMsgs = 0;
   int numSentMsgs = 0;
 
@@ -58,7 +64,7 @@ class HkDeviceMgr extends CommMgr {
     bool res = false;
     autoConnectLocalIp = systemInfo!.colocatedMatrixIp;
 
-    res = hyperCubeMgr.initWithSystemInfo(systemInfo: systemInfo);
+    res = hkDevice.initWithSystemInfo(systemInfo: systemInfo);
     logger.add(EVENTTYPE.INFO, "DeviceMgr", "init()", (res == true) ? 1 : 0);
 
     return res;
@@ -67,14 +73,12 @@ class HkDeviceMgr extends CommMgr {
   Future<bool> deinit() async {
     logger.add(EVENTTYPE.INFO, "DeviceMgr", "deinit()", 0);
     backChanneltreamCtrl.close();
-    return hyperCubeMgr.deinit();
+    return hkDevice.deinit();
   }
 
   bool _sendBinary(List<int> data, [int size = 0]) {
     logger.setStateInt("DeviceMgr-NumSentMsgs", ++numSentMsgs);
-    if (activeChannel == CHANNEL.BACKCHANNEL)
-      return backChannelSendBinary(data, size);
-    return false;
+    return backChannelSendBinary(data, size);
   }
 
   bool sendMsg(Msg msg) {
@@ -94,6 +98,16 @@ class HkDeviceMgr extends CommMgr {
     logger.setStateString("DeviceMgr-Channel", "backChannel-" + groupName);
   }
 
+  bool onConnection() {
+    logger.add(EVENTTYPE.INFO, "DeviceMgr", "onConnection()", 0);
+    return true;
+  }
+
+  bool onDisconnection() {
+    logger.add(EVENTTYPE.INFO, "DeviceMgr", "onDisconnection()", 0);
+    return true;
+  }
+
   @override
   bool onOpenStream(MsgExt msgExt) {
     if (!backChanneltreamCtrl.hasListener) {
@@ -102,7 +116,6 @@ class HkDeviceMgr extends CommMgr {
     }
     logger.add(
         EVENTTYPE.INFO, "DeviceMgr", "onBackChannelOpen(), opened channel");
-    activeChannel = CHANNEL.BACKCHANNEL;
     backChanneltreamCtrl.add(msgExt);
     return true;
   }
@@ -112,11 +125,8 @@ class HkDeviceMgr extends CommMgr {
     logger.add(
         EVENTTYPE.INFO, "DeviceMgr", "onBackChannelClose(), closed channel");
     logger.setStateString("DeviceMgr-Channel", "");
-    if (activeChannel == CHANNEL.BACKCHANNEL) {
-      var closeMsgExt = CloseMsgExt();
-      backChanneltreamCtrl.add(closeMsgExt);
-      activeChannel = CHANNEL.NONE;
-    }
+    var closeMsgExt = CloseMsgExt();
+    backChanneltreamCtrl.add(closeMsgExt);
     return true;
   }
 
@@ -128,34 +138,28 @@ class HkDeviceMgr extends CommMgr {
   @override
   onMsg(MsgExt msgExt) {
     logger.setStateInt("DeviceMgr-NumRecvdMsgs", ++numRecvdMsgs);
-    if (activeChannel == CHANNEL.BACKCHANNEL) backChanneltreamCtrl.add(msgExt);
+    backChanneltreamCtrl.add(msgExt);
   }
 
   bool backChannelSendBinary(List<int> data, [int size = 0]) {
-    return hyperCubeMgr.hostSendBinary(data, size);
+    return hkDevice.hostSendBinary(data, size);
   }
 
   // --------------------------------------------------------------------------
   // These methods are called by MatrixConnectionStateMachine to do stuff
 
   bool startOpenBackChannel(String channelName) {
-    activeChannel = CHANNEL.BACKCHANNEL;
-    bool stat = hyperCubeMgr.enable(channelName);
     logger.add(EVENTTYPE.INFO, "DeviceMgr::startOpenBackChannel()",
         "connect to back channel, $channelName");
-    return stat;
+    return true;
   }
 
   bool startCloseBackChannel() {
-    hyperCubeMgr.disable();
-    activeChannel = CHANNEL.NONE;
     logger.add(EVENTTYPE.INFO, "DeviceMgr::startCloseBackChannel()", "");
     return onCloseStream();
   }
 
   bool closeAll() {
-    hyperCubeMgr.disable();
-    activeChannel = CHANNEL.NONE;
     onCloseStream();
     logger.add(EVENTTYPE.INFO, "DeviceMgr::closeAll()", "");
     return true;

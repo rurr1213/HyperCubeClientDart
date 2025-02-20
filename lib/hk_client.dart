@@ -11,6 +11,8 @@ import 'CommonCppDartCode/Messages/MessagesCommon_generated.dart';
 import 'CommonCppDartCode/Messages/HyperCubeMessagesCommon_generated.dart';
 
 abstract class HyperCubeHost {
+  bool onConnection();
+  bool onDisconnection();
   onInfo(String groupName);
   bool onOpenStream(MsgExt msgExt);
   onMsg(MsgExt msgExt);
@@ -152,14 +154,14 @@ class HkClient extends HyperCubeClientBase {
   @override
   bool onConnection() {
     super.onConnection();
-    return true;
+    return hyperCubeHost.onConnection();
   }
 
   @override
   bool onDisconnection() {
     super.onDisconnection();
     onCloseStream();
-    return true;
+    return hyperCubeHost.onDisconnection();
   }
 
   onMsgForHost(MsgExt msgExt) {

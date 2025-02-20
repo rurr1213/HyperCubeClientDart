@@ -7,68 +7,13 @@ import 'tools/logger.dart';
 import 'tools/msg_ext.dart';
 import 'hk_client.dart';
 
-class StringLineList extends ChangeNotifier {
-  static const int maxLength = 1000;
-  HKClientMgr hyperCubeMgr;
-  List<String> _list = [];
-  StringLineList(this.hyperCubeMgr);
-  int dumpedLines = 0;
-
-  bool onList(List<String> _stringList) {
-    _list = _stringList;
-    notifyListeners();
-    return true;
-  }
-
-  List<String> getList() => _list;
-  String getFirst() {
-    return (_list.isNotEmpty) ? _list[0] : "";
-  }
-
-  bool onReplaceList(int start, int end, List<String> _list) {
-    _list.replaceRange(start - dumpedLines, end - dumpedLines, _list);
-    notifyListeners();
-    return true;
-  }
-
-  bool onAddLines(LineList _lineList) {
-    if (_lineList.list.length <= 0) return false;
-    int itemNum = 0;
-    _lineList.list.forEach((element) {
-      int destIndex = _lineList.startingIndex - dumpedLines + itemNum;
-      if (_list.length <= destIndex) {
-        _list.add(element);
-      } else {
-        _list[destIndex] = element;
-      }
-      itemNum++;
-    });
-
-    if (_list.length > maxLength) {
-      _list.removeRange(0, 9);
-      dumpedLines += 10;
-    }
-    notifyListeners();
-    return true;
-  }
-
-  bool onReplaceLines(LineList _lineList) {
-    if (_lineList.list.length <= 0) return false;
-    _list = _lineList.list;
-    notifyListeners();
-    return true;
-  }
-
-  clear() {
-    _list.clear();
-  }
-}
+import 'string_line_list.dart';
 
 class LogLineList extends StringLineList {
   LogLineList(backChannelMgr) : super(backChannelMgr);
 
   requestLogs() {
-    int startIndex = _list.length;
+    int startIndex = list.length;
     int numItems = 10;
     return hyperCubeMgr.getLogLines(startIndex, numItems);
   }
@@ -82,7 +27,7 @@ class StatusLineList extends StringLineList {
   StatusLineList(backChannelMgr) : super(backChannelMgr);
 
   requestStatus() {
-    int startIndex = _list.length;
+    int startIndex = list.length;
     int numItems = 10;
     return hyperCubeMgr.getStatusLines(startIndex, numItems);
   }
@@ -110,12 +55,11 @@ class GroupInfoList extends ChangeNotifier {
   }
 }
 
-class HKClientMgr extends HkClient {
+class HKDevice extends HkClient {
   HyperCubeHost hyperCubeHost;
   late LogLineList logLineList;
   late StatusLineList statusLineList;
-  HKClientMgr(Logger logger, this.hyperCubeHost)
-      : super(logger, hyperCubeHost) {
+  HKDevice(Logger logger, this.hyperCubeHost) : super(logger, hyperCubeHost) {
     logLineList = LogLineList(this);
     statusLineList = StatusLineList(this);
   }
@@ -141,7 +85,6 @@ class HKClientMgr extends HkClient {
     return true;
   }
 
-  bool backChannelEnabled = false;
   String currentGroup = "";
 
   @override
@@ -152,7 +95,6 @@ class HKClientMgr extends HkClient {
 
   bool onDisconnection() {
     super.onDisconnection();
-    if (backChannelEnabled) backChannelEnabled = false;
     return true;
   }
 
@@ -164,52 +106,16 @@ class HKClientMgr extends HkClient {
   @override
   onConnectionDataClosed() {
     super.onConnectionDataClosed();
-    backChannelEnabled = false;
     hyperCubeHost.onConnectionClosed();
   }
 
   @override
   onMsgForHost(MsgExt msgExt) {
-    if (backChannelEnabled) {
-      super.onMsgForHost(msgExt);
-    }
+    super.onMsgForHost(msgExt);
   }
 
   bool hostSendBinary(List<int> data, [int size = 0]) {
-    bool stat = false;
-    if (backChannelEnabled) {
-      return super.sendBinary(data, size);
-    }
-    return stat;
-  }
-
-  bool subscribe(String groupName) {
-    return super.subscribe(groupName);
-  }
-
-  bool unsubscribe(String groupName) {
-    return super.unsubscribe(groupName);
-  }
-
-  bool enable(String group) {
-    bool stat = false;
-    if (!backChannelEnabled) {
-      stat = subscribe(group);
-      if (stat) {
-        backChannelEnabled = true;
-        currentGroup = group;
-      }
-    }
-    return stat;
-  }
-
-  bool disable() {
-    bool stat = false;
-    if (backChannelEnabled) {
-      stat = unsubscribe(currentGroup);
-      if (stat) backChannelEnabled = false;
-    }
-    return stat;
+    return super.sendBinary(data, size);
   }
 
   @override
