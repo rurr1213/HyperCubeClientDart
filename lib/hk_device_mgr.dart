@@ -177,7 +177,7 @@ class HkDeviceMgr extends CommMgr {
     publishInfo.groupName = groupName;
     publishInfo.publishData = data;
     hkDevice.publish(publishInfo);
-    logger.add(EVENTTYPE.INFO, "DeviceMgr::publish()", groupName);
+    logger.add(EVENTTYPE.INFO, "DeviceMgr::publish()", "$groupName : $data");
     return true;
   }
 }
