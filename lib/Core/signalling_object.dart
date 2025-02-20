@@ -305,7 +305,7 @@ class SignallingObject {
     return proceesed;
   }
 
-  bool processHostMsg(MsgExt msgExt) {
+  bool onMsgForSignalling(MsgExt msgExt) {
     return processMsg(msgExt);
   }
 

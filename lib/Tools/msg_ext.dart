@@ -211,6 +211,10 @@ class MsgExt {
     return _msg as MsgCmd;
   }
 
+  MsgJson getMsgJson() {
+    return _msg as MsgJson;
+  }
+
   MsgIddStatItemSet getMsgIddStatItemSet() {
     return _msg as MsgIddStatItemSet;
   }

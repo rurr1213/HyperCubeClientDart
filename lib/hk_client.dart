@@ -129,7 +129,7 @@ class HkClient extends HyperCubeClientBase {
     super.onMsg(msgExt);
     switch (msgExt.getMsg().subSys) {
       case SUBSYS_SIG:
-        signallingObject!.processHostMsg(msgExt);
+        signallingObject!.onMsgForSignalling(msgExt);
         break;
       case SUBSYS_DISCOVERY:
         {
