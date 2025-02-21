@@ -393,8 +393,6 @@ class SignallingObject {
   }
 
   bool subscribe(SubscriberInfo subscriberInfo ) {
-    if ((state != SignallingObjectState.connected) &&
-        (state != SignallingObjectState.closedForData)) return false;
     return sendSigCommand(HYPERCUBECOMMANDS.SUBSCRIBE, subscriberInfo,
         "HyperCubeClient::SignallingObject()::subscribe()");
   }
