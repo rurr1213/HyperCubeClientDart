@@ -184,6 +184,10 @@ class MsgExt {
             _msgExt._msg = MsgCmd("");
             _msgExt._msg.deserialize(sd);
             break;
+          case CMD_JSON:
+            _msgExt._msg = MsgJsonCmd("");
+            _msgExt._msg.deserialize(sd);
+            break;
           default:
             break;
         }
@@ -215,6 +219,10 @@ class MsgExt {
     return _msg as MsgJson;
   }
 
+  MsgJsonCmd getMsgJsonCmd() {
+    return _msg as MsgJsonCmd;
+  }
+
   MsgIddStatItemSet getMsgIddStatItemSet() {
     return _msg as MsgIddStatItemSet;
   }
@@ -233,6 +241,10 @@ class MsgExt {
 
   Msg getMsg() {
     return _msg;
+  }
+
+  Type getRunTypeType() {
+    return _msg.runtimeType;
   }
 
   bool validProtocolCode() {

@@ -398,29 +398,21 @@ class SignallingObject {
   }
 
   bool unsubscribe(SubscriberInfo subscriberInfo) {
-    if ((state == SignallingObjectState.disconnected) ||
-        (state == SignallingObjectState.instantiated)) return false;
     return sendSigCommand(HYPERCUBECOMMANDS.UNSUBSCRIBE, subscriberInfo,
         "HyperCubeClient::SignallingObject()::unsubscribe()");
   }
 
   bool publish(PublishInfo publishInfo ) {
-    if ((state != SignallingObjectState.connected) &&
-        (state != SignallingObjectState.closedForData)) return false;
     return sendSigCommand(HYPERCUBECOMMANDS.PUBLISHINFO, publishInfo,
         "HyperCubeClient::SignallingObject()::subscribe()");
   }
 
   bool publishAck(PublishInfoAck publishInfoAck ) {
-    if ((state != SignallingObjectState.connected) &&
-        (state != SignallingObjectState.closedForData)) return false;
     return sendSigCommand(HYPERCUBECOMMANDS.PUBLISHINFOACK, publishInfoAck,
         "HyperCubeClient::SignallingObject()::subscribe()");
   }
 
   bool getGroups(String _searchWord, {startingIndex = 0, maxItems = 10}) {
-    if ((state == SignallingObjectState.disconnected) ||
-        (state == SignallingObjectState.instantiated)) return false;
     GetGroupsInfo getGroupsInfo = GetGroupsInfo();
     getGroupsInfo.searchWord = _searchWord;
     getGroupsInfo.startingIndex = startingIndex;
@@ -430,8 +422,6 @@ class SignallingObject {
   }
 
   bool getLogLines(startingIndex, maxItems) {
-    if ((state == SignallingObjectState.disconnected) ||
-        (state == SignallingObjectState.instantiated)) return false;
     LineList lineList = LineList();
     lineList.startingIndex = startingIndex;
     lineList.numItems = maxItems;
@@ -439,8 +429,6 @@ class SignallingObject {
   }
 
   bool getStatusLines(startingIndex, maxItems) {
-    if ((state == SignallingObjectState.disconnected) ||
-        (state == SignallingObjectState.instantiated)) return false;
     LineList lineList = LineList();
     lineList.startingIndex = startingIndex;
     lineList.numItems = maxItems;
@@ -448,8 +436,6 @@ class SignallingObject {
   }
 
   bool getConnectionInfo(List<String> _list) {
-    if ((state == SignallingObjectState.disconnected) ||
-        (state == SignallingObjectState.instantiated)) return false;
     Map<String, dynamic> _map = connectionInfoAck.toJson();
     _map.forEach((key, value) {
       _list.add("$key:$value");

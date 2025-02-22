@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:typed_data';
+import 'dart:convert';
 
 import 'Data/system_info.dart';
 import 'hk_client.dart';
@@ -7,10 +8,13 @@ import 'hk_device.dart';
 
 import 'CommonCppDartCode/Messages/MessagesCommon_generated.dart';
 import 'CommonCppDartCode/Messages/HyperCubeMessagesCommon_generated.dart';
+import 'CommonCppDartCode/dart/utils.dart';
 
 import 'tools/ser_des.dart';
 import 'tools/logger.dart';
 import 'tools/msg_ext.dart';
+
+import 'group_activity_data.dart';
 
 class CommMgr implements HyperCubeHost {
   final Logger logger;
@@ -52,6 +56,8 @@ class HkDeviceMgr extends CommMgr {
   StreamController<MsgExt> backChanneltreamCtrl = StreamController<MsgExt>();
   Stream? backChannelStream;
   String autoConnectLocalIp = "";
+  GroupActivityData groupActivityData = GroupActivityData();
+  StreamSubscription<dynamic>? deviceMgrStreamSubscription;
 
   final Logger logger;
 
@@ -69,7 +75,21 @@ class HkDeviceMgr extends CommMgr {
     res = hkDevice.initWithSystemInfo(systemInfo: systemInfo);
     logger.add(EVENTTYPE.INFO, "DeviceMgr", "init()", (res == true) ? 1 : 0);
 
+    deviceMgrStreamSubscription = backChannelStream!.listen((msg) {
+      processMsg(msg);
+    }, onDone: () {
+      streamClosed();
+    }, onError: (error) {
+      logger.add(
+          EVENTTYPE.ERROR, "HkDeviceMgr", "backChannelStream.listen(), error!");
+    });
+
     return res;
+  }
+
+  bool streamClosed() {
+    logger.add(EVENTTYPE.WARNING, "DeviceMgr", "onCloseStream()", 0);
+    return true;
   }
 
   Future<bool> deinit() async {
@@ -143,6 +163,63 @@ class HkDeviceMgr extends CommMgr {
     backChanneltreamCtrl.add(msgExt);
   }
 
+  bool processMsg(MsgExt msgExt) {
+    bool proceesed = false;
+    switch (msgExt.subSys) {
+      case SUBSYS_CMD:
+        switch (msgExt.command) {
+          case CMD_JSON:
+//            MsgJsonCmd msgJsonCmd = msgExt.getMsgJson() as MsgJsonCmd;
+            MsgJsonCmd msgJsonCmd = msgExt.getMsg() as MsgJsonCmd;
+            proceesed = processMsgJson(msgJsonCmd);
+            break;
+          default:
+        }
+        break;
+      default:
+    }
+    return proceesed;
+  }
+
+  bool processMsgJson(MsgJsonCmd msgJsonCmd) {
+    String jsonString = msgJsonCmd.jsonData;
+    bool processed = false;
+    HyperCubeCommand hyperCubeCommand =
+        HyperCubeCommand(HYPERCUBECOMMANDS.NONE, null, true);
+    try {
+      hyperCubeCommand.fromJson(jsonDecode(jsonString));
+
+      switch (hyperCubeCommand.command) {
+        case HYPERCUBECOMMANDS.PUBLISHINFOACK:
+          logger.add(EVENTTYPE.INFO, "HkDeviceMgr",
+              "processMsgJson(), received publishInfoAck");
+          processed = onPublishInfoAck(hyperCubeCommand);
+          break;
+        default:
+      }
+    } catch (e) {
+      logger.add(
+          EVENTTYPE.ERROR,
+          "SignallingObject::processMsgJson()",
+          jsonString +
+              ", field not found " +
+              e.toString() +
+              " on command " +
+              hyperCubeCommand.command.toString());
+    }
+    return processed;
+  }
+
+  bool onPublishInfoAck(HyperCubeCommand hyperCubeCommand) {
+    PublishInfoAck publishInfoAck = PublishInfoAck();
+    publishInfoAck.fromJson(hyperCubeCommand.jsonData);
+    String _groupName = publishInfoAck.groupName;
+    groupActivityData.add(
+        _groupName, HYPERCUBECOMMANDS.PUBLISHINFOACK, publishInfoAck);
+
+    return true;
+  }
+
   bool backChannelSendBinary(List<int> data, [int size = 0]) {
     return hkDevice.hostSendBinary(data, size);
   }
@@ -172,12 +249,32 @@ class HkDeviceMgr extends CommMgr {
     return channelList;
   }
 
-  bool publish(String groupName, String data) {
+  StringUuid? publish(String groupName, String data) {
     PublishInfo publishInfo = PublishInfo();
     publishInfo.groupName = groupName;
     publishInfo.publishData = data;
-    hkDevice.publish(publishInfo);
+    if (!hkDevice.publish(publishInfo)) {
+      logger.add(
+          EVENTTYPE.ERROR, "DeviceMgr::publish() failed", "$groupName : $data");
+      return null;
+    }
+
     logger.add(EVENTTYPE.INFO, "DeviceMgr::publish()", "$groupName : $data");
-    return true;
+    return publishInfo.uuid;
+  }
+
+  Future<String> publishAndWait(String groupName, String data) async {
+    StringUuid? uuid = publish(groupName, data);
+    if (uuid == null) return "";
+    CommonInfoBase? commonInfoBase = null;
+
+    while (commonInfoBase == null) {
+      await Future.delayed(Duration(seconds: 1)); // Sleep for 1 second
+      commonInfoBase = await groupActivityData.findWait(
+          groupName, HYPERCUBECOMMANDS.PUBLISHINFOACK, uuid);
+    }
+    if (commonInfoBase == null) return "";
+    PublishInfoAck? publishInfoAck = commonInfoBase as PublishInfoAck;
+    return publishInfoAck.publishAckData;
   }
 }

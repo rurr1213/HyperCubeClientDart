@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:typed_data';
 import 'dart:async';
+import 'dart:convert';
 
 import '../CommonCppDartCode/Messages/MessagesCommon_generated.dart';
 import '../CommonCppDartCode/Messages/HyperCubeMessagesCommon_generated.dart';
@@ -200,12 +201,22 @@ class HyperCubeClientBase {
     return signallingObject!.unsubscribe(subscriberInfo);
   }
 
+  bool sendJsonCmd(HYPERCUBECOMMANDS command, dynamic data,
+      {status = true, ack = false}) {
+    HyperCubeCommand hyperCubeCommand = HyperCubeCommand(command, data, status);
+    hyperCubeCommand.ack = ack;
+
+    String jsonString = jsonEncode(hyperCubeCommand.toJson());
+    MsgJsonCmd msgJsonCmd = MsgJsonCmd(jsonString);
+    return sendMsg(msgJsonCmd);
+  }
+
   bool publish(PublishInfo publishInfo) {
-    return signallingObject!.publish(publishInfo);
+    return sendJsonCmd(HYPERCUBECOMMANDS.PUBLISHINFO, publishInfo.toJson(), ack: true);
   }
 
   bool publishAck(PublishInfoAck publishInfoAck) {
-    return signallingObject!.publishAck(publishInfoAck);
+    return sendJsonCmd(HYPERCUBECOMMANDS.PUBLISHINFOACK, publishInfoAck.toJson(), ack: false);
   }
 
   dynamic onTcpReceive(Uint8List event) {
