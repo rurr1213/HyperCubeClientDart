@@ -191,8 +191,6 @@ class HkDeviceMgr extends CommMgr {
 
       switch (hyperCubeCommand.command) {
         case HYPERCUBECOMMANDS.PUBLISHINFOACK:
-          logger.add(EVENTTYPE.INFO, "HkDeviceMgr",
-              "processMsgJson(), received publishInfoAck");
           processed = onPublishInfoAck(hyperCubeCommand);
           break;
         default:
@@ -216,6 +214,11 @@ class HkDeviceMgr extends CommMgr {
     String _groupName = publishInfoAck.groupName;
     groupActivityData.add(
         _groupName, HYPERCUBECOMMANDS.PUBLISHINFOACK, publishInfoAck);
+    logger.add(
+        EVENTTYPE.INFO,
+        "HkDeviceMgr",
+        "processMsgJson(), received publishInfoAck " +
+            publishInfoAck.publishAckData);
 
     return true;
   }
@@ -253,13 +256,14 @@ class HkDeviceMgr extends CommMgr {
     PublishInfo publishInfo = PublishInfo();
     publishInfo.groupName = groupName;
     publishInfo.publishData = data;
+    publishInfo.ack = true;
     if (!hkDevice.publish(publishInfo)) {
       logger.add(
           EVENTTYPE.ERROR, "DeviceMgr::publish() failed", "$groupName : $data");
       return null;
     }
 
-    logger.add(EVENTTYPE.INFO, "DeviceMgr::publish()", "$groupName : $data");
+    //logger.add(EVENTTYPE.INFO, "DeviceMgr::publish()", "$groupName : $data");
     return publishInfo.uuid;
   }
 
@@ -268,12 +272,19 @@ class HkDeviceMgr extends CommMgr {
     if (uuid == null) return "";
     CommonInfoBase? commonInfoBase = null;
 
+    int maxLoops = 50;
     while (commonInfoBase == null) {
-      await Future.delayed(Duration(seconds: 1)); // Sleep for 1 second
+      await Future.delayed(Duration(milliseconds: 1000)); // Sleep for 1 second
       commonInfoBase = await groupActivityData.findWait(
           groupName, HYPERCUBECOMMANDS.PUBLISHINFOACK, uuid);
+      /*
+      if (maxLoops-- == 0) {
+        logger.add(EVENTTYPE.ERROR, "DeviceMgr::publishAndWait()",
+            "timeout waiting for response");
+        return "";
+      }
+      */
     }
-    if (commonInfoBase == null) return "";
     PublishInfoAck? publishInfoAck = commonInfoBase as PublishInfoAck;
     return publishInfoAck.publishAckData;
   }
