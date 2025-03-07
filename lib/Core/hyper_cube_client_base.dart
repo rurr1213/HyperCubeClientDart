@@ -193,6 +193,10 @@ class HyperCubeClientBase {
     return signallingObject!.createGroup(groupInfo);
   }
 
+  bool destroyGroup(GroupInfo groupInfo) {
+    return signallingObject!.destroyGroup(groupInfo);
+  }
+
   bool subscribe(SubscriberInfo subscriberInfo) {
     return signallingObject!.subscribe(subscriberInfo);
   }

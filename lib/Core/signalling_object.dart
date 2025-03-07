@@ -376,6 +376,11 @@ class SignallingObject {
         "HyperCubeClient::SignallingObject()::createGroup()");
   }
 
+  bool destroyGroup(GroupInfo groupInfo) {
+    return sendSigCommand(HYPERCUBECOMMANDS.DESTROYGROUP, groupInfo,
+        "HyperCubeClient::SignallingObject()::createGroup()");
+  }
+
   bool localPing([bool ack = false, String pingData = "localPingFromVortex"]) {
     return sendSigCommand(HYPERCUBECOMMANDS.LOCALPING, pingData,
         "HyperCubeClient::SignallingObject()::localPing()");

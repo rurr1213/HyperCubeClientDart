@@ -15,6 +15,7 @@ import 'tools/logger.dart';
 import 'tools/msg_ext.dart';
 
 import 'group_activity_data.dart';
+import 'hk_api.dart';
 
 class CommMgr implements HyperCubeHost {
   final Logger logger;
@@ -52,7 +53,7 @@ class CommMgr implements HyperCubeHost {
 // -----------------------------------------------------------------------
 enum CHANNEL { NONE, LOCALCHANNEL, BACKCHANNEL }
 
-class HkDeviceMgr extends CommMgr {
+class HkDeviceMgr extends CommMgr implements HKIAPI {
   StreamController<MsgExt> backChanneltreamCtrl = StreamController<MsgExt>();
   Stream? backChannelStream;
   String autoConnectLocalIp = "";
@@ -252,11 +253,11 @@ class HkDeviceMgr extends CommMgr {
     return channelList;
   }
 
-  StringUuid? publish(String groupName, String data) {
+  StringUuid? publish(String groupName, String data, {bool ack = true}) {
     PublishInfo publishInfo = PublishInfo();
     publishInfo.groupName = groupName;
     publishInfo.publishData = data;
-    publishInfo.ack = true;
+    publishInfo.ack = ack;
     if (!hkDevice.publish(publishInfo)) {
       logger.add(
           EVENTTYPE.ERROR, "DeviceMgr::publish() failed", "$groupName : $data");
@@ -272,7 +273,7 @@ class HkDeviceMgr extends CommMgr {
     if (uuid == null) return "";
     CommonInfoBase? commonInfoBase = null;
 
-    int maxLoops = 50;
+    //int maxLoops = 50;
     while (commonInfoBase == null) {
       await Future.delayed(Duration(milliseconds: 1000)); // Sleep for 1 second
       commonInfoBase = await groupActivityData.findWait(
@@ -287,5 +288,21 @@ class HkDeviceMgr extends CommMgr {
     }
     PublishInfoAck? publishInfoAck = commonInfoBase as PublishInfoAck;
     return publishInfoAck.publishAckData;
+  }
+
+  bool createGroup(GroupInfo groupInfo) {
+    return hkDevice.createGroup(groupInfo);
+  }
+
+  bool destroyGroup(GroupInfo groupInfo) {
+    return hkDevice.destroyGroup(groupInfo);
+  }
+
+  bool subscribe(SubscriberInfo subscriberInfo) {
+    return hkDevice.subscribe(subscriberInfo);
+  }
+
+  bool unsubscribe(SubscriberInfo subscriberInfo) {
+    return hkDevice.unsubscribe(subscriberInfo);
   }
 }
