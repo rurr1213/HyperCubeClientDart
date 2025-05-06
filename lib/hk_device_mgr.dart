@@ -290,6 +290,11 @@ class HkDeviceMgr extends CommMgr implements HKIAPI {
     return publishInfoAck.publishAckData;
   }
 
+  bool initAllGroupActivity() {
+    groupActivityData.releaseAll();
+    return true;
+  }
+
   bool createGroup(GroupInfo groupInfo) {
     return hkDevice.createGroup(groupInfo);
   }

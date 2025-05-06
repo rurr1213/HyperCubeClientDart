@@ -31,6 +31,10 @@ class GroupActivityData {
   Future<bool> erase(String groupName) {
     return mapGroupNameToCommands.erase(groupName);
   }
+
+  Future<void> releaseAll() async {
+    await mapGroupNameToCommands.releaseAll();
+  }
 }
 
 class GroupToCommandInfo {
@@ -90,6 +94,15 @@ class GroupToCommandInfo {
       return _groupToCommandInfo.remove(groupName) != null;
     });
   }
+
+  Future<void> releaseAll() async {
+    await _lock.synchronized(() async {
+      for (var commandInstances in _groupToCommandInfo.values) {
+        await commandInstances.releaseAll();
+      }
+      _groupToCommandInfo.clear();
+    });
+  }
 }
 
 class CommandsToCommandInstances {
@@ -131,6 +144,15 @@ class CommandsToCommandInstances {
           timeoutMsSecs: timeoutMsSecs);
     });
   }
+
+  Future<void> releaseAll() async {
+    await _lock.synchronized(() async {
+      for (var instanceList in _commands.values) {
+        instanceList.release();
+      }
+      _commands.clear();
+    });
+  }
 }
 
 class CommandInstanceList {
@@ -138,10 +160,12 @@ class CommandInstanceList {
   final Map<String, int> _uuidToIndexMap = {}; // Store UUIDs and their index
   final _lock = Lock();
   Completer<void> _activityIn = Completer<void>();
+  bool _released = false;
 
   Future<CommonInfoBase?> add(CommonInfoBase commandInstanceInfo) async {
     return await _lock.synchronized(() async {
       try {
+        if (_released) return null;
         _list.add(commandInstanceInfo);
         _uuidToIndexMap[commandInstanceInfo.uuid] = _list.length - 1;
         if (!_activityIn.isCompleted) {
@@ -184,7 +208,7 @@ class CommandInstanceList {
     }
 
     return await _lock.synchronized(() async {
-      if (_list.isEmpty) {
+      if (_list.isEmpty || _released) {
         return null;
       }
       try {
@@ -231,7 +255,7 @@ class CommandInstanceList {
     }
 
     return await _lock.synchronized(() async {
-      if (_uuidToIndexMap.containsKey(uuid) == false) {
+      if (_uuidToIndexMap.containsKey(uuid) == false || _released) {
         return null;
       }
 
@@ -254,5 +278,14 @@ class CommandInstanceList {
     if (_activityIn.isCompleted) {
       _activityIn = Completer<void>();
     }
+  }
+
+  void release() {
+    _released = true;
+    if (!_activityIn.isCompleted) {
+      _activityIn.complete();
+    }
+    _list.clear();
+    _uuidToIndexMap.clear();
   }
 }
